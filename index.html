@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem Akademik | Use Case Diagram</title>
+  <style>
+    :root{
+      --bg1:#0f172a;
+      --bg2:#111827;
+      --panel:#ffffff;
+      --primary:#4f46e5;
+      --primary-2:#7c3aed;
+      --accent:#22c55e;
+      --warning:#f59e0b;
+      --text:#0f172a;
+      --muted:#475569;
+      --card:#f8fafc;
+      --line:#dbeafe;
+      --shadow: 0 15px 35px rgba(15, 23, 42, 0.18);
+      --danger:#ef4444;
+      --success:#10b981;
+      --navy:#0b1220;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0f172a, #1e293b 35%, #312e81);}
+    body{min-height:100vh; color:var(--text); display:flex; align-items:center; justify-content:center; padding:24px;}
+
+    .login-screen{
+      width:min(100%, 1100px);
+      min-height:700px;
+      background: rgba(255,255,255,0.08);
+      border:1px solid rgba(255,255,255,0.15);
+      border-radius:28px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      backdrop-filter: blur(10px);
+    }
+
+    .login-hero{
+      background: linear-gradient(135deg, rgba(79,70,229,0.85), rgba(124,58,237,0.8));
+      position:relative;
+      display:flex; flex-direction:column; justify-content:center; padding:60px 48px;
+      color:#fff;
+    }
+
+    .login-hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.2), transparent 22%),
+        radial-gradient(circle at bottom right, rgba(34,197,94,0.18), transparent 25%);
+    }
+
+    .login-hero > * {position:relative; z-index:1}
+    .logo-badge{
+      width:72px; height:72px; background: rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.18); border-radius:20px;
+      display:grid; place-items:center; font-size:28px; font-weight:700; margin-bottom:20px;
+    }
+    .hero-title{font-size:2.4rem; font-weight:800; line-height:1.1; margin:0 0 14px}
+    .hero-sub{font-size:1rem; opacity:0.9; max-width: 480px; line-height:1.7}
+    .hero-points{list-style:none; padding:0; margin:28px 0 0; display:grid; gap:14px}
+    .hero-points li{display:flex; align-items:center; gap:10px; font-weight:600; opacity:0.96}
+    .hero-points li::before{content:"✓"; width:22px; height:22px; display:grid; place-items:center; border-radius:50%; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.2); font-size:14px; }
+
+    .login-panel{
+      background: rgba(15, 23, 42, 0.8);
+      display:flex; align-items:center; justify-content:center; padding:32px;
+    }
+
+    .form-wrap{
+      width:100%;
+      max-width:430px;
+      background: rgba(255,255,255,0.95);
+      border-radius:24px;
+      box-shadow: 0 25px 50px rgba(15,23,42,0.25);
+      padding:30px 28px 24px;
+    }
+
+    .form-header{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:28px;
+    }
+    .form-header h2{
+      margin:0; font-size:1.8rem; color:var(--text); letter-spacing:-0.02em;
+    }
+    .badge{
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color:#fff; border-radius:999px; padding:8px 12px; font-size:0.72rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+    }
+
+    .field{margin-bottom:18px;}
+    label{
+      display:block; font-size:0.82rem; font-weight:700; color:var(--muted); margin-bottom:8px;
+    }
+    input{
+      width:100%; height:52px; border:1px solid #dbe2ea; border-radius:14px; background:#f8fafc; padding:0 14px; font-size:1rem; color:var(--text); outline:none; transition:0.2s ease;
+    }
+    input:focus{border-color: var(--primary); box-shadow:0 0 0 4px rgba(79,70,229,0.12); background:#fff;}
+    .actions{display:flex; align-items:center; justify-content:space-between; margin-top:14px; gap:10px;}
+    .remember{display:flex; align-items:center; gap:8px; color:var(--muted); font-size:0.86rem;}
+    .remember input{width:16px; height:16px; accent-color:var(--primary);}
+    .btn{
+      border:none; border-radius:14px; background: linear-gradient(135deg, var(--primary), var(--primary-2)); color:#fff; padding:14px 18px; font-weight:700; cursor:pointer; transition:transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 12px 20px rgba(79,70,229,0.24);
+    }
+    .btn:hover{transform: translateY(-1px); box-shadow: 0 15px 22px rgba(79,70,229,0.3);}
+    .btn-alt{background: linear-gradient(135deg, #0f172a, #1e293b);}
+    .login-btn{width:100%; margin-top:8px;}
+
+    .status{
+      display:none; margin-top:14px; padding:12px 14px; border-radius:12px; font-size:0.9rem; font-weight:600;
+    }
+    .status.error{background:#fef2f2; color:#991b1b; border:1px solid #fecaca; display:block;}
+    .status.success{background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; display:block;}
+
+    .dashboard{
+      display:none;
+      width:min(100%, 1280px);
+      background: rgba(255,255,255,0.06);
+      border-radius:28px;
+      box-shadow: var(--shadow);
+      border:1px solid rgba(255,255,255,0.12);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      padding:22px 28px; background: rgba(15, 23, 42, 0.8); border-bottom:1px solid rgba(255,255,255,0.08);
+      color:#fff;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; font-weight:800; font-size:1.02rem;
+    }
+    .brand-mark{
+      width:40px; height:40px; border-radius:12px; background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      display:grid; place-items:center; font-size:1.1rem; font-weight:800;
+    }
+    .user-chip{
+      display:flex; align-items:center; gap:12px; background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); border-radius:999px; padding:8px 12px;
+    }
+    .avatar{
+      width:32px; height:32px; border-radius:50%; display:grid; place-items:center; background: linear-gradient(135deg, #22c55e, #10b981); font-weight:800; font-size:0.82rem;
+    }
+    .logout-btn{
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color:#fff; border:none; border-radius:12px; padding:10px 14px; cursor:pointer; font-weight:700;
+    }
+
+    .content{
+      padding:26px;
+      background: linear-gradient(180deg, rgba(15,23,42,0.4), rgba(15,23,42,0.7));
+    }
+
+    .hero-panel{
+      background: linear-gradient(135deg, rgba(79,70,229,0.9), rgba(124,58,237,0.85));
+      border-radius:22px; color:#fff; padding:28px 30px; display:flex; align-items:flex-start; justify-content:space-between; gap:16px; box-shadow: var(--shadow);
+    }
+    .hero-panel h1{margin:0 0 8px; font-size:2rem;}
+    .hero-panel p{margin:0; opacity:0.9; line-height:1.6; max-width:760px;}
+    .mini-stat{
+      min-width:140px; background: rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.12); border-radius:18px; padding:16px 18px; text-align:center;
+    }
+    .mini-stat strong{display:block; font-size:1.8rem; margin-bottom:4px;}
+    .mini-stat span{font-size:0.8rem; opacity:0.9; text-transform:uppercase; letter-spacing:0.06em;}
+
+    .stats{display:grid; grid-template-columns: repeat(4, minmax(180px,1fr)); gap:18px; margin-top:24px;}
+    .stat-card{
+      background: rgba(255,255,255,0.95); border-radius:18px; padding:18px 18px 16px; border:1px solid rgba(148,163,184,0.18); box-shadow: 0 15px 30px rgba(15,23,42,0.08);
+    }
+    .stat-card .label{font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; font-weight:700;}
+    .stat-card .value{font-size:2rem; font-weight:800; color:var(--text); margin-top:10px;}
+    .stat-card .meta{margin-top:8px; font-size:0.82rem; color:var(--success); font-weight:700;}
+    .stat-card:nth-child(2) .meta{color:var(--primary);}
+    .stat-card:nth-child(3) .meta{color:var(--warning);}
+    .stat-card:nth-child(4) .meta{color:var(--primary-2);}
+
+    .diagram-layout{
+      margin-top:26px;
+      display:grid;
+      grid-template-columns: 1.35fr 0.65fr;
+      gap:22px;
+    }
+
+    .diagram-card,.notes-card{
+      background: rgba(255,255,255,0.97); border:1px solid rgba(148,163,184,0.14); border-radius:22px; box-shadow: 0 15px 30px rgba(15,23,42,0.08);
+      padding:22px;
+    }
+    .section-title{
+      font-size:1.1rem; font-weight:800; margin:0 0 18px; color:var(--text); letter-spacing:-0.02em;
+    }
+    .diagram-box{
+      background: linear-gradient(180deg, #f8fbff, #eff6ff);
+      border:1px solid #dbeafe;
+      border-radius:22px;
+      padding:18px;
+      overflow:auto;
+    }
+    svg{width:100%; min-width:680px; height:480px; display:block;}
+    .actor{fill:#e2e8f0; stroke:#475569; stroke-width:2;}
+    .actor-text{font-size:18px; font-weight:700; fill:#0f172a; font-family:"Segoe UI", sans-serif;}
+    .usecase{fill:#dbeafe; stroke:#2563eb; stroke-width:2;}
+    .usecase-text{font-size:15px; font-weight:700; fill:#0f172a; font-family:"Segoe UI", sans-serif;}
+    .system-box{fill:#ecfeff; stroke:#0891b2; stroke-width:2;}
+    .system-text{font-size:17px; font-weight:700; fill:#0f172a; font-family:"Segoe UI", sans-serif;}
+    .arrow{stroke:#475569; stroke-width:2.3; fill:none}
+    .dashed{stroke-dasharray:7 7;}
+    .label{font-size:12px; fill:#334155; font-weight:700; font-family:"Segoe UI", sans-serif;}
+    .diamond{fill:#fef3c7; stroke:#f59e0b; stroke-width:2;}
+    .diamond-text{font-size:12px; font-weight:800; fill:#78350f;}
+
+    .legend{
+      display:grid; grid-template-columns: repeat(2, minmax(180px,1fr)); gap:12px; margin-top:16px;
+    }
+    .legend-item{
+      display:flex; align-items:center; gap:10px; color:var(--muted); font-size:0.82rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:10px 12px; font-weight:600;
+    }
+    .legend-line{
+      width:34px; height:2px; background:#475569; border-radius:999px; position:relative;
+    }
+    .legend-line.dash{background:transparent; border-top:2px dashed #475569; width:34px;}
+    .legend-line.arrow::after{
+      content:""; position:absolute; right:-3px; top:50%; width:0; height:0; border-left:8px solid #475569; border-top:5px solid transparent; border-bottom:5px solid transparent; transform:translateY(-50%);
+    }
+
+    .notes-list{
+      list-style:none; padding:0; margin:0; display:grid; gap:14px;
+    }
+    .notes-list li{
+      background: linear-gradient(180deg, #f8fafc, #eef2ff); border:1px solid #dbeafe; border-radius:14px; padding:14px 14px 12px;
+    }
+    .notes-list strong{display:block; margin-bottom:6px; color:var(--text); font-size:0.95rem;}
+    .notes-list span{color:var(--muted); line-height:1.6; font-size:0.9rem;}
+
+    .detail-grid{
+      margin-top:24px;
+      display:grid; grid-template-columns: repeat(2, minmax(260px,1fr)); gap:18px;
+    }
+    .detail-card{
+      background: rgba(255,255,255,0.96); border:1px solid rgba(148,163,184,0.18); border-radius:18px; padding:18px 18px 14px; box-shadow: 0 15px 30px rgba(15,23,42,0.06);
+    }
+    .detail-card h3{
+      margin:0 0 12px; font-size:1rem; color:var(--text);
+    }
+    .detail-card ul{
+      margin:0; padding-left:18px; color:var(--muted); line-height:1.8; font-size:0.92rem;
+    }
+    .detail-card li{margin-bottom:4px;}
+
+    @media (max-width: 980px){
+      .login-screen{grid-template-columns:1fr; min-height:auto;}
+      .login-hero{padding:42px 28px;}
+      .dashboard{width:100%;}
+      .diagram-layout{grid-template-columns:1fr;}
+      .stats{grid-template-columns:repeat(2,minmax(140px,1fr));}
+      .detail-grid{grid-template-columns:1fr;}
+    }
+
+    @media (max-width: 560px){
+      body{padding:14px;}
+      .form-wrap, .diagram-card, .notes-card, .detail-card{padding:18px;}
+      .hero-panel{flex-direction:column;}
+      .stats{grid-template-columns:1fr;}
+      .topbar{flex-wrap:wrap; align-items:flex-start;}
+      .user-chip{width:100%; justify-content:space-between;}
+      .logout-btn{margin-left:auto;}
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loginScreen" class="login-screen">
+    <section class="login-hero">
+      <div class="logo-badge">U</div>
+      <h1 class="hero-title">Use Case Diagram<br/>Sistem Akademik</h1>
+      <p class="hero-sub">
+        Platform digital untuk proses login, pengelolaan data, jadwal, tugas, dan evaluasi akademik.
+        Semua kebutuhan user dapat divisualisasikan dengan use case dan relasi yang jelas.
+      </p>
+
+      <ul class="hero-points">
+        <li>Login aman untuk Admin dan Mahasiswa</li>
+        <li>Relasi use case jelas dan mudah dipahami</li>
+        <li>UI/UX modern untuk presentasi dan pembelajaran</li>
+      </ul>
+    </section>
+
+    <section class="login-panel">
+      <div class="form-wrap">
+        <div class="form-header">
+          <h2>Masuk</h2>
+          <span class="badge">Demo</span>
+        </div>
+
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" value="admin" placeholder="Masukkan username" />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" id="password" value="admin123" placeholder="Masukkan password" />
+        </div>
+
+        <div class="actions">
+          <label class="remember">
+            <input type="checkbox" checked />
+            <span>Ingat saya</span>
+          </label>
+        </div>
+
+        <button class="btn login-btn" id="loginBtn">Login</button>
+
+        <div id="loginStatus" class="status"></div>
+
+        <div style="margin-top:14px; font-size:0.8rem; color:var(--muted); text-align:center;">
+          Coba login: <strong>admin</strong> / <strong>admin123</strong>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="dashboard" class="dashboard">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">U</div>
+        <span>Use Case Diagram Dashboard</span>
+      </div>
+
+      <div class="user-chip">
+        <div class="avatar" id="avatar">A</div>
+        <span id="userName">Admin</span>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="hero-panel">
+        <div>
+          <h1>Diagram Use Case Sistem Akademik</h1>
+          <p>
+            Visualisasi interaksi utama antara actor dan sistem. Fokus pada login, pengelolaan data, pengajuan tugas, jadwal, serta evaluasi hasil belajar.
+          </p>
+        </div>
+        <div class="mini-stat">
+          <strong>7</strong>
+          <span>Use Case</span>
+        </div>
+      </section>
+
+      <section class="stats">
+        <div class="stat-card">
+          <div class="label">Aktivitas</div>
+          <div class="value">24</div>
+          <div class="meta">+12% hari ini</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Aktor</div>
+          <div class="value">3</div>
+          <div class="meta">Admin, User, Sistem</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Relasi</div>
+          <div class="value">4</div>
+          <div class="meta">Include, Extend, Assoc.</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">Status</div>
+          <div class="value">Aktif</div>
+          <div class="meta">Siap digunakan</div>
+        </div>
+      </section>
+
+      <section class="diagram-layout">
+        <div class="diagram-card">
+          <h2 class="section-title">Use Case Diagram</h2>
+          <div class="diagram-box">
+            <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg" aria-label="Use case diagram">
+              <defs>
+                <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L9,3 z" fill="#475569"></path>
+                </marker>
+              </defs>
+
+              <!-- Actor: Admin -->
+              <rect class="actor" x="40" y="150" width="120" height="180" rx="18"></rect>
+              <circle cx="100" cy="193" r="25" fill="#cbd5e1" stroke="#475569" stroke-width="2"></circle>
+              <path d="M75 246 C84 220, 116 220, 125 246 L125 285 L75 285 Z" fill="#cbd5e1" stroke="#475569" stroke-width="2"></path>
+              <text class="actor-text" x="100" y="335" text-anchor="middle">Admin</text>
+
+              <!-- Actor: Mahasiswa -->
+              <rect class="actor" x="760" y="150" width="120" height="180" rx="18"></rect>
+              <circle cx="820" cy="193" r="25" fill="#cbd5e1" stroke="#475569" stroke-width="2"></circle>
+              <path d="M795 246 C804 220, 836 220, 845 246 L845 285 L795 285 Z" fill="#cbd5e1" stroke="#475569" stroke-width="2"></path>
+              <text class="actor-text" x="820" y="335" text-anchor="middle">Mahasiswa</text>
+
+              <!-- System -->
+              <rect class="system-box" x="260" y="40" width="400" height="395" rx="22"></rect>
+              <text class="system-text" x="460" y="78" text-anchor="middle">Sistem Akademik</text>
+
+              <!-- Use Case 1 -->
+              <ellipse class="usecase" cx="460" cy="120" rx="110" ry="48"></ellipse>
+              <text class="usecase-text" x="460" y="126" text-anchor="middle">Login</text>
+
+              <!-- Use Case 2 -->
+              <ellipse class="usecase" cx="350" cy="215" rx="120" ry="52"></ellipse>
+              <text class="usecase-text" x="350" y="220" text-anchor="middle">Kelola Data</text>
+
+              <!-- Use Case 3 -->
+              <ellipse class="usecase" cx="570" cy="215" rx="118" ry="52"></ellipse>
+              <text class="usecase-text" x="570" y="220" text-anchor="middle">Jadwal Kuliah</text>
+
+              <!-- Use Case 4 -->
+              <ellipse class="usecase" cx="350" cy="325" rx="120" ry="52"></ellipse>
+              <text class="usecase-text" x="350" y="330" text-anchor="middle">Pengajuan</text>
+
+              <!-- Use Case 5 -->
+              <ellipse class="usecase" cx="570" cy="325" rx="125" ry="52"></ellipse>
+              <text class="usecase-text" x="570" y="330" text-anchor="middle">Penilaian</text>
+
+              <!-- Generalization diamond -->
+              <polygon class="diamond" points="460,400 520,440 460,480 400,440"></polygon>
+              <text class="diamond-text" x="460" y="447" text-anchor="middle">User</text>
+
+              <!-- Association lines -->
+              <path class="arrow" d="M160 230 L300 145" marker-end="url(#arrow)"></path>
+              <text class="label" x="190" y="180">Association</text>
+
+              <path class="arrow" d="M760 230 L610 145" marker-end="url(#arrow)"></path>
+              <text class="label" x="660" y="180">Association</text>
+
+              <path class="arrow" d="M160 250 L265 242" marker-end="url(#arrow)"></path>
+              <text class="label" x="185" y="235">Login</text>
+
+              <path class="arrow" d="M760 260 L640 245" marker-end="url(#arrow)"></path>
+              <text class="label" x="665" y="245">Login</text>
+
+              <!-- Include relation -->
+              <path class="arrow dashed" d="M460 168 L460 200" marker-end="url(#arrow)"></path>
+              <text class="label" x="475" y="188">&lt;&lt;include&gt;&gt;</text>
+
+              <!-- Extend relation -->
+              <path class="arrow dashed" d="M470 315 Q520 360 560 330" marker-end="url(#arrow)"></path>
+              <text class="label" x="500" y="355">&lt;&lt;extend&gt;&gt;</text>
+
+              <!-- Generalization -->
+              <path class="arrow" d="M460 395 L460 440" marker-end="url(#arrow)"></path>
+              <text class="label" x="475" y="425">Generalization</text>
+
+              <!-- Lines to system -->
+              <path class="arrow" d="M160 195 C210 170, 240 150, 300 130" marker-end="url(#arrow)"></path>
+              <path class="arrow" d="M760 195 C710 170, 680 150, 620 130" marker-end="url(#arrow)"></path>
+
+              <path class="arrow" d="M160 260 C220 260, 260 260, 295 240" marker-end="url(#arrow)"></path>
+              <path class="arrow" d="M760 260 C700 260, 660 260, 620 240" marker-end="url(#arrow)"></path>
+
+              <path class="arrow" d="M160 300 C240 330, 270 332, 310 330" marker-end="url(#arrow)"></path>
+              <path class="arrow" d="M760 300 C700 330, 660 332, 610 330" marker-end="url(#arrow)"></path>
+
+              <!-- relation label: admin -> manages -->
+              <text class="label" x="210" y="210">Manage</text>
+              <text class="label" x="610" y="210">Access</text>
+            </svg>
+          </div>
+
+          <div class="legend">
+            <div class="legend-item">
+              <span class="legend-line arrow"></span>
+              Association
+            </div>
+            <div class="legend-item">
+              <span class="legend-line dash"></span>
+              Include / Extend
+            </div>
+            <div class="legend-item">
+              <span class="legend-line arrow"></span>
+              Generalization
+            </div>
+            <div class="legend-item">
+              <span style="display:inline-block; width:34px; height:20px; border-radius:8px; background:#dbeafe; border:2px solid #2563eb;"></span>
+              Use Case
+            </div>
+          </div>
+        </div>
+
+        <aside class="notes-card">
+          <h2 class="section-title">Relasi & Penjelasan</h2>
+          <ul class="notes-list">
+            <li>
+              <strong>Association</strong>
+              <span>Admin dan Mahasiswa berinteraksi langsung dengan sistem melalui fitur login, jadwal, dan pengajuan.</span>
+            </li>
+            <li>
+              <strong>Include</strong>
+              <span>Use case Login mencakup validasi data user. Tanpa validasi, proses login tidak bisa berlangsung.</span>
+            </li>
+            <li>
+              <strong>Extend</strong>
+              <span>Use case Pengajuan dapat diperluas ketika user menambahkan dokumen atau revisi data sebelum disetujui.</span>
+            </li>
+            <li>
+              <strong>Generalization</strong>
+              <span>Admin dan Mahasiswa merupakan bentuk khusus dari pengguna umum (User), sehingga memiliki perilaku dasar yang sama.</span>
+            </li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="detail-grid">
+        <div class="detail-card">
+          <h3>Poin Penting</h3>
+          <ul>
+            <li>Use case menggambarkan kebutuhan fungsional sistem.</li>
+            <li>Aktor mewakili pihak yang berinteraksi dengan sistem.</li>
+            <li>Relasi menjelaskan hubungan antar aktor dan use case.</li>
+            <li>Diagram ini memudahkan pemahaman alur kerja aplikasi.</li>
+          </ul>
+        </div>
+
+        <div class="detail-card">
+          <h3>Penjelasan Singkat</h3>
+          <ul>
+            <li>Admin mengelola data akademik dan jadwal.</li>
+            <li>Mahasiswa mengakses jadwal dan mengajukan kebutuhan.</li>
+            <li>Login merupakan prerequisite utama untuk semua interaksi.</li>
+            <li>Penilaian adalah proses hasil akhir setelah aktivitas utama selesai.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const loginStatus = document.getElementById('loginStatus');
+    const userName = document.getElementById('userName');
+    const avatar = document.getElementById('avatar');
+
+    const users = {
+      admin: "admin123",
+      mahasiswa: "mahasiswa123",
+      user: "123456"
+    };
+
+    function showStatus(message, type) {
+      loginStatus.textContent = message;
+      loginStatus.className = "status " + type;
+    }
+
+    function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!username || !password) {
+        showStatus("Username dan password wajib diisi.", "error");
+        return;
+      }
+
+      if (users[username] === password) {
+        showStatus("Login berhasil! Mengalihkan ke dashboard...", "success");
+        localStorage.setItem("loggedIn", "true");
+        localStorage.setItem("username", username);
+
+        setTimeout(() => {
+          const displayName = username.charAt(0).toUpperCase() + username.slice(1);
+          userName.textContent = displayName;
+          avatar.textContent = displayName.charAt(0).toUpperCase();
+
+          loginScreen.style.display = "none";
+          dashboard.style.display = "block";
+        }, 500);
+      } else {
+        showStatus("Username atau password salah. Coba admin/admin123.", "error");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("loggedIn");
+      localStorage.removeItem("username");
+      document.getElementById('username').value = "admin";
+      document.getElementById('password').value = "admin123";
+      showStatus("");
+      loginScreen.style.display = "grid";
+      dashboard.style.display = "none";
+    }
+
+    loginBtn.addEventListener('click', login);
+    logoutBtn.addEventListener('click', logout);
+
+    document.getElementById('password').addEventListener('keydown', function(e){
+      if (e.key === 'Enter') login();
+    });
+
+    window.addEventListener('load', () => {
+      const saved = localStorage.getItem("loggedIn");
+      const savedUser = localStorage.getItem("username") || "admin";
+      if (saved === "true") {
+        const displayName = savedUser.charAt(0).toUpperCase() + savedUser.slice(1);
+        userName.textContent = displayName;
+        avatar.textContent = displayName.charAt(0).toUpperCase();
+        loginScreen.style.display = "none";
+        dashboard.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
